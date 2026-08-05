@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Osobní konfigurace (cesty ke složkám, uložená pozice okna) – šablona je config.example.json
+config.json

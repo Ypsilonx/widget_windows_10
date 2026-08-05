@@ -1,0 +1,36 @@
+{
+  "root_paths": [
+    "C:\\Users\\tvoje_jmeno\\Projects"
+  ],
+  "marker_files": [
+    ".git",
+    ".vscode",
+    "package.json",
+    "pyproject.toml",
+    "requirements.txt",
+    "*.sln",
+    "*.csproj"
+  ],
+  "skip_dirs": [
+    "node_modules",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".git",
+    "dist",
+    "build",
+    "target"
+  ],
+  "max_scan_depth": 3,
+  "editor_command": "code",
+  "window": {
+    "width": 300,
+    "height": 480,
+    "corner": "top-right",
+    "margin_x": 20,
+    "margin_y": 20,
+    "opacity": 0.95,
+    "locked": false,
+    "position": null
+  }
+}
