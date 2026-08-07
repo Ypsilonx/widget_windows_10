@@ -70,6 +70,8 @@ class DashboardWidget(ctk.CTk):
         self._drag_offset = (0, 0)
         self._scan_results: queue.Queue = queue.Queue()
         self._locked = bool(self.config_data["window"].get("locked", False))
+        self._is_scanning = False
+        self._search_after_id = None
 
         self._setup_window()
         self._build_ui()
@@ -111,7 +113,7 @@ class DashboardWidget(ctk.CTk):
         self._build_header(border)
 
         self.search_var = ctk.StringVar()
-        self.search_var.trace_add("write", lambda *_: self._render_list())
+        self.search_var.trace_add("write", lambda *_: self._on_search_changed())
         search_entry = ctk.CTkEntry(border, textvariable=self.search_var, placeholder_text="Hledat...")
         search_entry.pack(fill="x", padx=10, pady=8)
 
@@ -221,6 +223,12 @@ class DashboardWidget(ctk.CTk):
         y = self.winfo_pointery() - self._drag_offset[1]
         self.geometry(f"+{x}+{y}")
 
+    def _on_search_changed(self) -> None:
+        """Odloží reálné překreslení seznamu, aby UI nelagovalo při rychlém psaní."""
+        if self._search_after_id is not None:
+            self.after_cancel(self._search_after_id)
+        self._search_after_id = self.after(300, self._render_list)
+
     def refresh_projects(self) -> None:
         """Spustí sken disku na pozadí (vlákno), ať widget mezitím nezamrzne.
 
@@ -228,6 +236,10 @@ class DashboardWidget(ctk.CTk):
         projektů trvat řádově sekundy – proto běží mimo hlavní (UI) vlákno a
         výsledek se vyzvedne přes frontu ve `_poll_scan_result`.
         """
+        if self._is_scanning:
+            return
+
+        self._is_scanning = True
         for widget in self.list_frame.winfo_children():
             widget.destroy()
         ctk.CTkLabel(self.list_frame, text="Načítám...").pack(pady=20)
@@ -253,6 +265,7 @@ class DashboardWidget(ctk.CTk):
         except queue.Empty:
             self.after(100, self._poll_scan_result)
             return
+        self._is_scanning = False
         self._all_projects = projects
         self._render_list()
 
