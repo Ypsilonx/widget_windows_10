@@ -45,15 +45,27 @@ def _project_last_modified(dir_path: str, skip_set: set[str]) -> float:
     proto je potřeba reálně projít soubory a vzít z nich nejnovější mtime.
     """
     latest = 0.0
-    for current_dir, subdirs, files in os.walk(dir_path):
-        subdirs[:] = [d for d in subdirs if d.lower() not in skip_set]
-        for name in files:
-            try:
-                mtime = os.path.getmtime(os.path.join(current_dir, name))
-            except OSError:
-                continue
-            if mtime > latest:
-                latest = mtime
+
+    def scan(current_path: str) -> None:
+        nonlocal latest
+        try:
+            with os.scandir(current_path) as entries:
+                for entry in entries:
+                    try:
+                        if entry.is_dir(follow_symlinks=False):
+                            if entry.name.lower() not in skip_set:
+                                scan(entry.path)
+                        else:
+                            mtime = entry.stat(follow_symlinks=False).st_mtime
+                            if mtime > latest:
+                                latest = mtime
+                    except OSError:
+                        continue
+        except OSError:
+            pass
+
+    scan(dir_path)
+
     if latest == 0.0:
         try:
             latest = os.path.getmtime(dir_path)
