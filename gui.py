@@ -14,6 +14,7 @@ import customtkinter as ctk
 from scanner import Project, find_projects
 from settings_dialog import FolderSettingsDialog
 from taskbar import show_in_taskbar
+from window_style import apply_rounded_corners
 
 MIN_WIDTH = 220
 MIN_HEIGHT = 280
@@ -103,6 +104,7 @@ class DashboardWidget(ctk.CTk):
         # Ikona se nastavuje až po show_in_taskbar() (ten okno na moment schová/ukáže) –
         # jinak by taskbar stihl zaregistrovat tlačítko ještě s výchozí ikonou pythonu.
         self.after(50, lambda: self.iconbitmap(ICON_PATH))
+        apply_rounded_corners(self)
 
     def _build_ui(self) -> None:
         """Sestaví ovládací prvky: vlastní hlavička (drag+zavření), vyhledávání, seznam."""

@@ -5,6 +5,11 @@ všech tvých projektů (napříč libovolným počtem sledovaných složek), ba
 signalizuje, jak dávno se na nich pracovalo, a jedním kliknutím je otevře ve
 VS Code.
 
+> **Pozor na název:** repozitář/složka se jmenuje `widget_windows_10`, ale to
+> je jen historický pozůstatek. Projekt je aktualizovaný pro **Windows 11**
+> (spouštění bez VBScriptu, kulaté rohy okna); na Windows 10 dál funguje,
+> jen s hranatými rohy.
+
 ![Ukázka widgetu](docs/screenshot.png)
 
 ## Funkce
@@ -57,10 +62,12 @@ uv run main.py
 Tiché spuštění bez konzole (pro běžné používání):
 
 ```
-run_widget.vbs
+.venv\Scripts\pythonw.exe main.py
 ```
 
-(dvojklik ve Průzkumníku, nebo `cscript run_widget.vbs`)
+(nebo dvojklik na zástupce vytvořeného přes `add_to_startup.ps1`, viz níže).
+Starší `run_widget.vbs` zatím funguje taky, ale Windows 11 VBScript postupně
+vypínají, takže na něj nespoléhej.
 
 ## Automatický start s Windows
 
@@ -68,7 +75,7 @@ run_widget.vbs
 powershell -File add_to_startup.ps1
 ```
 
-Vytvoří zástupce v `shell:startup`, takže se widget spustí sám při každém
+Vytvoří zástupce v `shell:startup` (míří přímo na `pythonw.exe`, bez VBS), takže se widget spustí sám při každém
 přihlášení. Zrušení: smaž `ProjectDashboardWidget.lnk` ze složky Po spuštění
 (Win+R → `shell:startup`).
 
